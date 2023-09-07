@@ -1,0 +1,15 @@
+---
+- name: Download Vector deb
+  ansible.builtin.get_url:
+    url: "https://packages.timber.io/vector/{{ vector_version }}/vector_{{ vector_version }}-1_amd64.deb"
+    dest: "/tmp/vector-{{ vector_version }}-1_amd64.deb"
+- name: Install Vector
+  become: true
+  ansible.builtin.apt:
+    deb: "/tmp/vector-{{ vector_version }}-1_amd64.deb"
+- name: Build Vector config
+  become: true
+  ansible.builtin.template:
+    src: vector.yml.tpl
+    dest: "{{ vector_config_file }}"
+  notify: Restart Vector service
